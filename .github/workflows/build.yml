@@ -1,0 +1,32 @@
+name: Build RF Bot EXE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Publish single EXE file
+        run: |
+          dotnet publish -r win-x64 -p:PublishSingleFile=true --self-contained -c Release
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v3
+        with:
+          name: rf-bot-exe
+          path: bin/Release/net8.0-windows/win-x64/publish/
